@@ -1,0 +1,48 @@
+
+在进行网页设计是，经常会用到很多字体，来提升网站的美观性，在前端实现设计时，由于系统默认安装字体比较有限，很多字体无法显示，此时需要引入特殊字体包，英文字体包只需要26个字母和一些标点符号，就基本能完成英文文本的显示，所以字体包就比较小，一般在几十k左右，而中文字符数量庞大，字体包的文件大小能达到几M甚至十几M，这对于网页加载来说无疑是个沉重的负担。
+
+现在有很多的开源插件来压缩中文字体包的大小，基本原理都是检测页面中用到的中文字符，对其他没有用到的中文字符进行删除，从而达到精简字体包的效果，这些插件需要事先了解需要展示的中文字符，所以这种做法只适合于页面需要用到的特殊字体内容，不经常变动的情况。本人的网站使用的是百度提供的  Fontmin 插件
+
+
+使用步骤
+1.安装插件
+npm install fontmin
+
+新建fontmin.js 文件 代码如下：
+
+var Fontmin = require('fontmin'); // 引入插件，下载到当前项目的依赖中，本文件（fontmin.js）也建在当前项目目录下
+ 
+var srcPath = './STXingkai.ttf'; // 字体源文件路径，需要保证该ttf文件存在
+var destPath = './fontmin';    // 字体输出路径
+var text = '首页;音乐;足球;视频'; // 这里进行配置需要用到的字符，可以是中文或英文字母
+ 
+// 初始化
+var fontmin = new Fontmin()
+    .src(srcPath)               // 输入配置
+    .use(Fontmin.glyph({        // 字型提取插件
+        text: text              // 所需文字
+    }))
+    .use(Fontmin.ttf2eot())     // eot 转换插件
+    .use(Fontmin.ttf2woff())    // woff 转换插件     
+    .use(Fontmin.ttf2svg())     // svg 转换插件
+    .use(Fontmin.css())         // css 生成插件
+    .dest(destPath);            // 输出配置
+ 
+// 执行
+fontmin.run(function (err, files, stream) {
+ 
+    if (err) {                  // 异常捕捉
+        console.error(err);
+    }
+    console.log('done');        // 成功
+});
+
+执行fontmin.js 文件
+
+node fontmin.js
+
+完成后会生成一个fontmin 文件夹，里面对应的 eot、svg、ttf、woff等格式字体，根据需要选用
+
+
+资源链接
+https://blog.csdn.net/bowen11233/article/details/82115043
